@@ -25,3 +25,29 @@ TXT mail._domainkey.nymann.xyz (set to the value of mailserver/data/dms/config/o
 MX nymann.dev mail.nymann.dev 10
 A mail.nymann.dev YOUR_IP
 ```
+
+3. Configure reverse proxy
+
+```
+# mailserver/data/dms/config/postfix-main.cf
+postscreen_upstream_proxy_protocol = haproxy
+```
+
+```
+# mailserver/data/dms/config/postfix-master.cf
+submission/inet/smtpd_upstream_proxy_protocol=haproxy
+smtps/inet/smtpd_upstream_proxy_protocol=haproxy
+```
+
+```
+# mailserver/data/dms/config/dovecot.cf
+haproxy_trusted_networks = 172.0.0./8
+haproxy_timeout = 3 secs
+service imap-login {
+  inet_listener imaps {
+    haproxy = yes
+    ssl = yes
+    port = 10993
+  }
+}
+```
