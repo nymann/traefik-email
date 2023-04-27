@@ -47,7 +47,7 @@ smtps/inet/smtpd_upstream_proxy_protocol=haproxy
 
 ```
 # mailserver/data/dms/config/dovecot.cf
-haproxy_trusted_networks = 172.0.0./8
+haproxy_trusted_networks = 172.0.0.0/8
 haproxy_timeout = 3 secs
 service imap-login {
   inet_listener imaps {
