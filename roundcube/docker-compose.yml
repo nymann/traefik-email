@@ -15,8 +15,8 @@ services:
       - ROUNDCUBEMAIL_SMTP_SERVER=tls://mail.nymann.dev
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`mail.nymann.dev`)"
-      - "traefik.http.services.whoami.loadbalancer.server.port=80"
+      - "traefik.http.routers.roundcube.rule=Host(`mail.nymann.dev`)"
+      - "traefik.http.services.roundcube.loadbalancer.server.port=80"
     networks:
       - web
 
