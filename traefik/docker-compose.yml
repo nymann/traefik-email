@@ -1,0 +1,38 @@
+version: "3.7"
+
+services:
+  traefik:
+    image: docker.io/traefik:latest
+    restart: unless-stopped
+    container_name: traefik
+    ports:
+       - "80:80"
+       - "443:443"
+       - "25:25"
+       - "993:993"
+       - "4190:4190"
+    command:
+       - --certificatesresolvers.letsencrypt.acme.email=admin@nymann.dev
+       - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http
+       - --certificatesresolvers.letsencrypt.acme.storage=/acme.json
+       - --entryPoints.imap-ssl.address=:993
+       - --entryPoints.sieve.address=:4190
+       - --entryPoints.smtp-ssl.address=:465
+       - --entrypoints.http.address=:80
+       - --entrypoints.http.http.redirections.entryPoint.scheme=https
+       - --entrypoints.http.http.redirections.entryPoint.to=https
+       - --entrypoints.https.address=:443
+       - --entrypoints.https.http.tls.certResolver=letsencrypt
+       - --providers.docker
+       - --providers.docker.exposedbydefault=false
+       - --providers.docker.network=proxy
+    volumes:
+       - ./data/acme.json:/acme.json
+       - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - proxy
+
+
+networks:
+  proxy:
+    external: true

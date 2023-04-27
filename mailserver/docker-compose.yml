@@ -1,0 +1,49 @@
+version: "3.7"
+
+services:
+  mailserver:
+    image: ghcr.io/docker-mailserver/docker-mailserver:latest
+    container_name: mailserver
+    hostname: mail.nymann.dev
+    env_file: mailserver.env
+    volumes:
+      - ./data/dms/mail-data/:/var/mail/
+      - ./data/dms/mail-state/:/var/mail-state/
+      - ./data/dms/mail-logs/:/var/log/mail/
+      - ./data/dms/config/:/tmp/docker-mailserver/
+      - ../traefik/data/acme.json:/etc/letsencrypt/acme.json:ro
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    stop_grace_period: 1m
+    healthcheck:
+      test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
+      timeout: 3s
+      retries: 0
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.tcp.routers.imap-ssl.entrypoints=imap-ssl"
+      - "traefik.tcp.routers.imap-ssl.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.imap-ssl.service=imap-ssl"
+      - "traefik.tcp.routers.sieve.entrypoints=sieve"
+      - "traefik.tcp.routers.sieve.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.sieve.service=sieve"
+      - "traefik.tcp.routers.smtp-ssl.entrypoints=smtp-ssl"
+      - "traefik.tcp.routers.smtp-ssl.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.smtp-ssl.service=smtp-ssl"
+      - "traefik.tcp.routers.smtp-ssl.tls=false"
+      - "traefik.tcp.routers.smtp.entrypoints=smtp"
+      - "traefik.tcp.routers.smtp.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.smtp.service=smtp"
+      - "traefik.tcp.services.imap-ssl.loadbalancer.proxyProtocol.version=2"
+      - "traefik.tcp.services.imap-ssl.loadbalancer.server.port=10993"
+      - "traefik.tcp.services.sieve.loadbalancer.server.port=4190"
+      - "traefik.tcp.services.smtp-ssl.loadbalancer.proxyProtocol.version=1"
+      - "traefik.tcp.services.smtp-ssl.loadbalancer.server.port=465"
+      - "traefik.tcp.services.smtp.loadbalancer.proxyProtocol.version=1"
+      - "traefik.tcp.services.smtp.loadbalancer.server.port=25"
+
+networks:
+  proxy:
+    external: true
