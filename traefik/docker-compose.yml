@@ -8,18 +8,10 @@ services:
     ports:
        - "80:80"
        - "443:443"
-       - "25:25"
-       - "465:465"
-       - "993:993"
-       - "4190:4190"
     command:
        - --certificatesresolvers.letsencrypt.acme.email=admin@nymann.dev
        - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http
        - --certificatesresolvers.letsencrypt.acme.storage=/acme.json
-       - --entryPoints.imap-ssl.address=:993
-       - --entryPoints.sieve.address=:4190
-       - --entryPoints.smtp.address=:25
-       - --entryPoints.smtp-ssl.address=:465
        - --entrypoints.http.address=:80
        - --entrypoints.http.http.redirections.entryPoint.scheme=https
        - --entrypoints.http.http.redirections.entryPoint.to=https
