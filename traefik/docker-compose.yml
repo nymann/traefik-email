@@ -25,14 +25,14 @@ services:
        - --entrypoints.https.http.tls.certResolver=letsencrypt
        - --providers.docker
        - --providers.docker.exposedbydefault=false
-       - --providers.docker.network=proxy
+       - --providers.docker.network=web
     volumes:
        - ./data/acme.json:/acme.json
        - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
-      - proxy
+      - web
 
 
 networks:
-  proxy:
+  web:
     external: true

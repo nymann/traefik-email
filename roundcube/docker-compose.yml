@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  whoami:
+  roundcube:
     container_name: roundcube
     image: roundcube/roundcubemail:latest
     restart: unless-stopped
@@ -18,8 +18,8 @@ services:
       - "traefik.http.routers.whoami.rule=Host(`mail.nymann.dev`)"
       - "traefik.http.services.whoami.loadbalancer.server.port=80"
     networks:
-      - proxy
+      - web
 
 networks:
-  proxy:
+  web:
     external: true

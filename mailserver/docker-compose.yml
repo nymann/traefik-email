@@ -20,7 +20,7 @@ services:
       timeout: 3s
       retries: 0
     networks:
-      - proxy
+      - web
     labels:
       - "traefik.enable=true"
       - "traefik.tcp.routers.imap-ssl.entrypoints=imap-ssl"
@@ -45,5 +45,5 @@ services:
       - "traefik.tcp.services.smtp.loadbalancer.server.port=25"
 
 networks:
-  proxy:
+  web:
     external: true
