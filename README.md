@@ -12,6 +12,12 @@ docker-compose up -d
 cd ../mailserver
 docker-compose up -d
 
+# Add user
+docker exec -ti mailserver setup email add kristian@nymann.dev
+
+# Add global catch-all alias
+docker exec -ti mailserver setup alias add @nymann.dev kristian@nymann.dev
+
 # Generate DKIM
 docker exec -ti mailserver setup config dkim keysize 2048
 ```
